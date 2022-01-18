@@ -1,4 +1,4 @@
-package order
+package article
 
 import (
 	"context"
