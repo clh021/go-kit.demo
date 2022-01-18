@@ -11,7 +11,7 @@ import (
 	http "demo/server/http"
 
 	_ "demo/router/grpc"
-	_ "demo/router/http"
+	_ "demo/router/httprouter"
 )
 
 func init() {
