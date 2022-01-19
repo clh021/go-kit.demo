@@ -8,4 +8,5 @@ import (
 
 func RegisterRouter(mux *http.ServeMux)  {
 	mux.Handle("/article/create", transport.MakeCreateHandler(svc.NewArticleService()))
+	mux.Handle("/article/detail", transport.MakeDetailHandler(svc.NewArticleService()))
 }

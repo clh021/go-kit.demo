@@ -22,3 +22,18 @@ func MakeCreateEndpoint(svc service.ArticleService) endpoint.Endpoint {
 		return resp, nil
 	}
 }
+
+// make endpoint             service -> endpoint
+func MakeDetailEndpoint(svc service.ArticleService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req, ok := request.(*article_param.DetailReq)
+		if !ok {
+			return nil, errors.EndpointTypeError
+		}
+		resp, err := svc.Detail(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	}
+}

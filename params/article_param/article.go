@@ -3,7 +3,7 @@ package article_param
 type CreateReq struct {
 	Title string `json:"title"`
 	Content string `json:"content"`
-	CateId int64 `json:"cate_id"`
+	//CateId int64 `json:"cate_id"`
 }
 
 type CreateResp struct {

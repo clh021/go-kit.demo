@@ -13,9 +13,9 @@ import (
 
 // Server
 // 1. decode request      http.request -> model.request
-func decodeCreateRequest(_ context.Context, r *http.Request) (interface{}, error) {
+func decodeDetailRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	r.ParseForm()
-	req := &article_param.CreateReq{}
+	req := &article_param.DetailReq{}
 	err := transport.ParseForm(r.Form, req)
 	if err != nil {
 		return nil, err
@@ -25,17 +25,17 @@ func decodeCreateRequest(_ context.Context, r *http.Request) (interface{}, error
 }
 
 // 2. encode response      model.response -> http.response
-func encodeCreateResponse(_ context.Context, w http.ResponseWriter, resp interface{}) error {
+func encodeDetailResponse(_ context.Context, w http.ResponseWriter, resp interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
 	return json.NewEncoder(w).Encode(resp)
 }
 
 // make handler
-func MakeCreateHandler(svc service.ArticleService) http.Handler {
+func MakeDetailHandler(svc service.ArticleService) http.Handler {
 	handler := httptransport.NewServer(
-		endpoint.MakeCreateEndpoint(svc),
-		decodeCreateRequest,
-		encodeCreateResponse,
+		endpoint.MakeDetailEndpoint(svc),
+		decodeDetailRequest,
+		encodeDetailResponse,
 		transport.ErrorServerOption(), // 自定义错误处理
 	)
 	return handler

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"demo/params/article_param"
+	"fmt"
 )
 
 // ArticleService 定义文章service接口，规定本service要提供的方法
@@ -24,6 +25,8 @@ func NewArticleService() ArticleService {
 type articleService struct {}
 
 func (s *articleService) Create	(ctx context.Context, req *article_param.CreateReq) (*article_param.CreateResp, error) {
+	fmt.Printf("req:%#v\n", req)
+
 	// mock：insert 根据传入参数req插库生成Id
 	id := 1
 	return &article_param.CreateResp{
@@ -32,6 +35,8 @@ func (s *articleService) Create	(ctx context.Context, req *article_param.CreateR
 }
 
 func (s *articleService) Detail (ctx context.Context, req *article_param.DetailReq) (*article_param.DetailResp, error) {
+	fmt.Printf("req:%#v\n", req)
+
 	// mock：GetArticleById
 	detail := struct {
 		Id int64
