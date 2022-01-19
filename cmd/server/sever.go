@@ -10,7 +10,7 @@ import (
 	grpc "demo/server/grpc"
 	http "demo/server/http"
 
-	_ "demo/router/grpc"
+	_ "demo/router/grpcrouter"
 	_ "demo/router/httprouter"
 )
 

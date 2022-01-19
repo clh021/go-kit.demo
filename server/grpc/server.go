@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"demo/router/grpcrouter"
 	"net"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -15,11 +16,11 @@ var opts = []grpc.ServerOption{
 
 var grpcServer = grpc.NewServer(opts...)
 
-func RegisterService(sd *grpc.ServiceDesc, svc interface{}) {
-	grpcServer.RegisterService(sd, svc)
-}
-
 func Run(addr string, errc chan error) {
+
+	// 注册grpcServer
+	grpcrouter.RegisterRouter(grpcServer)
+
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		errc <- err

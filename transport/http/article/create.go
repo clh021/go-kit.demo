@@ -39,7 +39,7 @@ func encodeCreateResponse(_ context.Context, w http.ResponseWriter, resp interfa
 	return json.NewEncoder(w).Encode(resp)
 }
 
-// make handler
+// MakeCreateHandler 利用 git-kit 提供的 transport/http 的融合 decodeRequest、encodeResponse ，并调用 endpoint 层
 func MakeCreateHandler(svc service.ArticleService) http.Handler {
 	handler := httptransport.NewServer(
 		endpoint.MakeCreateEndpoint(svc),

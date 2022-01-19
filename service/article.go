@@ -8,7 +8,7 @@ import (
 
 // ArticleService 定义文章service接口，规定本service要提供的方法
 type ArticleService interface {
-	Create	(ctx context.Context, req *article_param.CreateReq) (*article_param.CreateResp, error)
+	Create (ctx context.Context, req *article_param.CreateReq) (*article_param.CreateResp, error)
 	Detail (ctx context.Context, req *article_param.DetailReq) (*article_param.DetailResp, error)
 }
 

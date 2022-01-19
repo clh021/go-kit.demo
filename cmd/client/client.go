@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 
 	pb "demo/pb/user"
+	pbArticle "demo/pb/article"
 )
 
 func init() {
@@ -24,8 +25,9 @@ func main() {
 	}
 	defer conn.Close()
 
-	Create(conn)
+	//Create(conn)
 	//	Delete(conn)
+	ArticleCreate(conn)
 }
 
 func Create(conn *grpc.ClientConn) {
@@ -52,4 +54,16 @@ func Delete(conn *grpc.ClientConn) {
 	err := conn.Invoke(ctx, "/pb.User/Delete", in, out)
 	fmt.Println(err)
 	fmt.Println(out)
+}
+
+func ArticleCreate(conn *grpc.ClientConn) {
+	client := pbArticle.NewArticleServiceClient(conn)
+	resp, _ := client.Create(context.Background(), &pbArticle.CreateReq{
+		Title: "123",
+		Content: "123",
+		CateId: 1,
+	})
+
+	fmt.Printf("%#v\n", resp)
+	fmt.Printf("%#v\n", resp.Id)
 }
