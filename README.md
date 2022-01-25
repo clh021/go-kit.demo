@@ -1,4 +1,9 @@
-# go-kit demo
+# go-kit-demo
+
+> 本项目 fork [FengGeSe/demo](https://github.com/FengGeSe/demo)，并进行改造。
+> 1.grpc服务的注册、handle等调用 protobuf 生成的代码，不再单独拿到 router 和 transport 中自己实现；
+> 2.调整 router 和 server 层，路由注册和服务注册方式；
+> 3.为了区别 orm 中的 model，使用 params 代替 model；
 
 基于[go-kit](https://github.com/go-kit/kit)的一个demo工程。
 
