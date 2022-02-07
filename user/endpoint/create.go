@@ -2,10 +2,10 @@ package endpoint
 
 import (
 	"context"
-
+	"demo/common/errors"
+	"fmt"
 	"github.com/go-kit/kit/endpoint"
 
-	errors "demo/errors"
 	"demo/user/model"
 	"demo/user/service"
 )
@@ -14,6 +14,7 @@ import (
 func MakeCreateEndpoint(svc service.UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req, ok := request.(*model.CreateReq)
+		fmt.Printf("%#v\n", *req)
 		if !ok {
 			return nil, errors.EndpointTypeError
 		}

@@ -2,9 +2,9 @@ package endpoint
 
 import (
 	"context"
+	"demo/common/errors"
 	"github.com/go-kit/kit/endpoint"
 
-	errors "demo/errors"
 	"demo/user/model"
 	"demo/user/service"
 )

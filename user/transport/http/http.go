@@ -2,11 +2,10 @@ package http
 
 import (
 	"context"
+	"demo/common/errors"
 	"net/http"
 
 	httptransport "github.com/go-kit/kit/transport/http"
-
-	errors "demo/errors"
 )
 
 const (

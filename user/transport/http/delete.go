@@ -3,7 +3,10 @@ package http
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
+	"strconv"
 
 	httptransport "github.com/go-kit/kit/transport/http"
 
@@ -15,16 +18,24 @@ import (
 // Server
 // 1. decode request      http.request -> model.request
 func decodeDeleteRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	if err := FormCheckAccess(r); err != nil {
+	if err := r.ParseForm(); err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
-	r.ParseForm()
-	req := &model.DeleteReq{}
-	err := ParseForm(r.Form, req)
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		return nil, err
 	}
-	r.Body.Close()
+	req := &model.DeleteReq{
+		Id: int64(id),
+	}
+
+	err = r.Body.Close()
+	if err != nil {
+		return nil, err
+	}
 	return req, nil
 }
 

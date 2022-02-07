@@ -3,9 +3,11 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-
+	"errors"
+	"fmt"
 	httptransport "github.com/go-kit/kit/transport/http"
+	"io/ioutil"
+	"net/http"
 
 	"demo/user/model"
 	"demo/user/service"
@@ -16,16 +18,24 @@ import (
 // Server
 // 1. decode request      http.request -> model.request
 func decodeCreateRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	if err := FormCheckAccess(r); err != nil {
-		return nil, err
+	bodyBytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("参数解析错误")
 	}
-	r.ParseForm()
+
 	req := &model.CreateReq{}
-	err := ParseForm(r.Form, req)
+	err = json.Unmarshal(bodyBytes, &req)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("参数解析错误")
+	}
+	fmt.Printf("%#v\n", req)
+
+	err = r.Body.Close()
 	if err != nil {
 		return nil, err
 	}
-	r.Body.Close()
 	return req, nil
 }
 

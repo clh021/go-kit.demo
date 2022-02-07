@@ -1,12 +1,12 @@
 package main
 
 import (
+	"demo/user/conf"
 	"flag"
 	"os"
 
 	log "github.com/sirupsen/logrus"
 
-	conf "demo/conf"
 	grpc "demo/user/server/grpc"
 	http "demo/user/server/http"
 )

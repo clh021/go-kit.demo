@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"demo/user/conf"
 	"flag"
 	"fmt"
 	"google.golang.org/grpc"
 
-	"demo/conf"
 	pb "demo/user/pb"
 )
 
