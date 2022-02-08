@@ -4,10 +4,11 @@ import (
 	pb "demo/user/pb"
 	"demo/user/service"
 	transport "demo/user/transport/grpc"
-	"net"
-
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
+	"net"
 )
 
 var opts = []grpc.ServerOption{
@@ -19,9 +20,11 @@ var opts = []grpc.ServerOption{
 var grpcServer = grpc.NewServer(opts...)
 
 func Run(addr string, errc chan error) {
-
 	// 注册grpcServer
 	pb.RegisterUserServiceServer(grpcServer, transport.NewUserGrpcServer(service.NewUserService()))
+
+	// 注册服务健康检查
+	grpc_health_v1.RegisterHealthServer(grpcServer, health.NewServer())
 
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -31,3 +34,4 @@ func Run(addr string, errc chan error) {
 
 	errc <- grpcServer.Serve(lis)
 }
+

@@ -3,6 +3,7 @@ package http
 import (
 	"net"
 	"net/http"
+	"time"
 
 	"demo/user/service"
 	transport "demo/user/transport/http"
@@ -44,6 +45,7 @@ func Run(addr string, errc chan error) {
 		errc <- err
 		return
 	}
+	time.Sleep(time.Second * 5)
 	errc <- httpServer.Serve(lis)
 }
 

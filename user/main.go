@@ -1,14 +1,17 @@
 package main
 
 import (
-	"demo/user/conf"
+	"demo/user/initialize"
 	"flag"
+	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
+	"demo/user/conf"
+	"demo/user/server/grpc"
+	"demo/user/server/http"
 	log "github.com/sirupsen/logrus"
-
-	grpc "demo/user/server/grpc"
-	http "demo/user/server/http"
 )
 
 func init() {
@@ -46,5 +49,21 @@ func main() {
 		go grpc.Run(conf.GrpcAddr, errc)
 	}
 
+	// consul 服务注册
+	initialize.ServiceRegister()
+
+	// 监听终止信号
+	go func() {
+		quit := make(chan os.Signal)
+		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+		errc <- fmt.Errorf("%s", <-quit)
+	}()
+
 	log.WithField("error", <-errc).Info("Exit")
+
+	// 服务反注册
+	if err := initialize.ConsulClient.Agent().ServiceDeregister(initialize.ServiceID); err != nil{
+		log.Info("服务从consul中：注销失败")
+	}
+	log.Info("服务从consul中：注销成功")
 }
