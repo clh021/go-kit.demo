@@ -12,21 +12,22 @@ import (
 
 func init() {
 	// flags
-	flag.StringVar(&conf.GrpcAddr, "grpc-addr", conf.GetEnv("GrpcAddr", "0.0.0.0:5000"), "grpc服务地址")
+	flag.StringVar(&conf.GrpcHost, "grpc-host", "0.0.0.0", "grpc服务IP/域名")
+	flag.IntVar(&conf.GrpcPort, "grpc-port", 5000, "grpc服务端口")
 }
 
 func main() {
-	conn, err := grpc.Dial(conf.GrpcAddr, grpc.WithInsecure())
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", conf.GrpcHost, conf.GrpcPort), grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("创建grpc连接失败! Error: %s", err)
 	}
 	defer conn.Close()
 
-	Create(conn)
-	Delete(conn)
+	create(conn)
+	delete(conn)
 }
 
-func Create(conn *grpc.ClientConn) {
+func create(conn *grpc.ClientConn) {
 	client := pb.NewUserServiceClient(conn)
 	resp, _ := client.Create(context.Background(), &pb.CreateReq{
 		Name: "wss",
@@ -37,7 +38,7 @@ func Create(conn *grpc.ClientConn) {
 	fmt.Printf("%#v\n", resp.Data.Name)
 }
 
-func Delete(conn *grpc.ClientConn) {
+func delete(conn *grpc.ClientConn) {
 	client := pb.NewUserServiceClient(conn)
 	resp, _ := client.Delete(context.Background(), &pb.DeleteReq{
 		Name: "wss",

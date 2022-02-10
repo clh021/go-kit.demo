@@ -1,6 +1,8 @@
 package initialize
 
 import (
+	"demo/user/conf"
+	"demo/user/global"
 	"fmt"
 	consulapi "github.com/hashicorp/consul/api"
 	uuid "github.com/satori/go.uuid"
@@ -12,7 +14,7 @@ var ServiceID string
 // ServiceRegister consul 服务注册
 func ServiceRegister()  {
 	cfg := consulapi.DefaultConfig()
-	cfg.Address = fmt.Sprintf("%s:%d", "consul", 8500)
+	cfg.Address = fmt.Sprintf("%s:%d", global.ConsulConfig.Host, global.ConsulConfig.Port)
 
 	var err error
 	ConsulClient, err = consulapi.NewClient(cfg)
@@ -22,7 +24,7 @@ func ServiceRegister()  {
 	// 生成对应的的检查对象
 	check := &consulapi.AgentServiceCheck{
 		// 通过grpc，也可通过http做。
-		GRPC:                           fmt.Sprintf("%s:%d", "golang", 5000),
+		GRPC:                           fmt.Sprintf("%s:%d", "golang", conf.GrpcPort),
 		//HTTP:                           fmt.Sprintf("%s/health", conf.HttpAddr),
 		Timeout:                        "5s",
 		Interval:                       "5s",
@@ -34,7 +36,7 @@ func ServiceRegister()  {
 	registration.Name = "user-srv"
 	ServiceID = fmt.Sprintf("%s", uuid.NewV4())
 	registration.ID = ServiceID
-	registration.Port = 5000
+	registration.Port = conf.GrpcPort
 	registration.Tags = []string{"user", "srv"}
 	registration.Address = "golang"
 	registration.Check = check

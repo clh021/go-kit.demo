@@ -3,8 +3,10 @@ package conf
 import "os"
 
 var (
-	HttpAddr string
-	GrpcAddr string
+	HttpHost string
+	HttpPort int
+	GrpcHost string
+	GrpcPort int
 )
 
 func GetEnv(name string, def string) string {

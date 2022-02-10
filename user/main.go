@@ -14,10 +14,21 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var HttpAddr string
+var GrpcAddr string
+
 func init() {
 	// flags
-	flag.StringVar(&conf.HttpAddr, "http-addr", conf.GetEnv("HttpAddr", "0.0.0.0:8080"), "http服务地址")
-	flag.StringVar(&conf.GrpcAddr, "grpc-addr", conf.GetEnv("GrpcAddr", "0.0.0.0:5000"), "grpc服务地址")
+	// go run user/main.go -grpc-host="0.0.0.0" -grpc-port=5001 -http-host="0.0.0.0" -http-port=8081
+	flag.StringVar(&conf.HttpHost, "http-host", "0.0.0.0", "http服务IP/域名")
+	flag.IntVar(&conf.HttpPort, "http-port", 8080, "http服务端口")
+	flag.StringVar(&conf.GrpcHost, "grpc-host", "0.0.0.0", "grpc服务IP/域名")
+	flag.IntVar(&conf.GrpcPort, "grpc-port", 5000, "grpc服务端口")
+
+	flag.Parse()
+
+	HttpAddr = fmt.Sprintf("%s:%d", conf.HttpHost, conf.HttpPort)
+	GrpcAddr = fmt.Sprintf("%s:%d", conf.GrpcHost, conf.GrpcPort)
 
 	// log
 	log.SetOutput(os.Stdout)
@@ -27,26 +38,27 @@ func init() {
 	})
 
 	log.WithFields(log.Fields{
-		"http-addr": conf.HttpAddr,
-		"grpc-addr": conf.GrpcAddr,
+		"http-addr": HttpAddr,
+		"grpc-addr": GrpcAddr,
 	}).Info("run flags:")
+
+	// 初始化
+	initialize.InitConfig()
 }
 
 func main() {
-	flag.Parse()
-
 	errc := make(chan error)
 
 	// http server
 	{
-		log.WithField("http-addr", conf.HttpAddr).Info("http server is running...")
-		go http.Run(conf.HttpAddr, errc)
+		log.WithField("http-addr", HttpAddr).Info("http server is running...")
+		go http.Run(HttpAddr, errc)
 	}
 
 	// grpc server
 	{
-		log.WithField("grpc-addr", conf.GrpcAddr).Info("grpc server is running...")
-		go grpc.Run(conf.GrpcAddr, errc)
+		log.WithField("grpc-addr", GrpcAddr).Info("grpc server is running...")
+		go grpc.Run(GrpcAddr, errc)
 	}
 
 	// consul 服务注册
