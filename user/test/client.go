@@ -14,6 +14,8 @@ func init() {
 	// flags
 	flag.StringVar(&conf.GrpcHost, "grpc-host", "0.0.0.0", "grpc服务IP/域名")
 	flag.IntVar(&conf.GrpcPort, "grpc-port", 5000, "grpc服务端口")
+
+	flag.Parse()
 }
 
 func main() {

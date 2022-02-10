@@ -4,6 +4,7 @@ import (
 	"demo/user/initialize"
 	"flag"
 	"fmt"
+	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"syscall"
@@ -44,9 +45,11 @@ func init() {
 
 	// 初始化
 	initialize.InitConfig()
+	initialize.InitLogger()
 }
 
 func main() {
+	zap.S().Info("logger测试")
 	errc := make(chan error)
 
 	// http server

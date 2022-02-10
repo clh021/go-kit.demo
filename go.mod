@@ -3,8 +3,7 @@ module demo
 go 1.12
 
 require (
-	github.com/go-kit/kit v0.9.0
-	github.com/go-logfmt/logfmt v0.4.0 // indirect
+	github.com/go-kit/kit v0.12.0
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gorilla/mux v1.8.0
@@ -14,9 +13,10 @@ require (
 	github.com/mbobakov/grpc-consul-resolver v1.4.4
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/satori/go.uuid v1.2.0
-	github.com/sirupsen/logrus v1.4.2
+	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.10.1
 	github.com/stretchr/testify v1.7.0 // indirect
+	go.uber.org/zap v1.19.1
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2
 	golang.org/x/sys v0.0.0-20220204135822-1c1b9b1eba6a // indirect
 	golang.org/x/text v0.3.7 // indirect
