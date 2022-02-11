@@ -3,12 +3,11 @@ package http
 import (
 	"net"
 	"net/http"
-	"time"
+
+	"github.com/gorilla/mux"
 
 	"demo/user/service"
 	transport "demo/user/transport/http"
-
-	"github.com/gorilla/mux"
 )
 
 //var mux = http.NewServeMux()
@@ -29,8 +28,13 @@ func WrapMiddleware(handlerMap map[string]http.Handler, middlewares ...HttpHandl
 }
 
 func RegisterRouter(r *mux.Router)  {
-	r.Handle("/user/create", transport.MakeCreateHandler(service.NewUserService())).Methods("POST")
-	r.Handle("/user/delete/{id}", transport.MakeDeleteHandler(service.NewUserService())).Methods("DELETE")
+	r.Methods("POST").Path("/user/create").Handler(transport.MakeCreateHandler(service.NewUserService()))
+	r.Methods("DELETE").Path("/user/delete/{id}").Handler(transport.MakeDeleteHandler(service.NewUserService()))
+	// 健康检测接口
+	r.Methods("GET", "POST").Path("/health").HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		writer.Header().Set("Content-type", "application/json")
+		writer.Write([]byte(`{"status": "ok"}`))
+	})
 }
 
 // http run
@@ -45,7 +49,7 @@ func Run(addr string, errc chan error) {
 		errc <- err
 		return
 	}
-	time.Sleep(time.Second * 5)
+
 	errc <- httpServer.Serve(lis)
 }
 

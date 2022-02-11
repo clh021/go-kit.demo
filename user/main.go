@@ -1,10 +1,12 @@
 package main
 
 import (
+	"demo/common/utils/consul"
+	"demo/user/global"
 	"demo/user/initialize"
 	"flag"
 	"fmt"
-	"go.uber.org/zap"
+	uuid "github.com/satori/go.uuid"
 	"os"
 	"os/signal"
 	"syscall"
@@ -49,7 +51,6 @@ func init() {
 }
 
 func main() {
-	zap.S().Info("logger测试")
 	errc := make(chan error)
 
 	// http server
@@ -65,7 +66,16 @@ func main() {
 	}
 
 	// consul 服务注册
-	initialize.ServiceRegister()
+	client := consul.NewClient("consul", 8500)
+	rc := consul.NewRegistryClient(client)
+	serviceId := fmt.Sprintf("%s", uuid.NewV4())
+	tags := []string{"srv"}
+	//err := rc.Register("golang", conf.HttpPort, global.ServerConfig.Name, tags, serviceId, "http")
+	//err := rc.Register("golang", conf.GrpcPort, global.ServerConfig.Name, tags, serviceId, "GRPC")
+	err := rc.RegisterByGrpc("golang", conf.GrpcPort, global.ServerConfig.Name, tags, serviceId)
+	if err != nil {
+		panic(err)
+	}
 
 	// 监听终止信号
 	go func() {
@@ -77,8 +87,9 @@ func main() {
 	log.WithField("error", <-errc).Info("Exit")
 
 	// 服务反注册
-	if err := initialize.ConsulClient.Agent().ServiceDeregister(initialize.ServiceID); err != nil{
+	if err := rc.DeRegister(serviceId); err != nil{
 		log.Info("服务从consul中：注销失败")
+	} else {
+		log.Info("服务从consul中：注销成功")
 	}
-	log.Info("服务从consul中：注销成功")
 }

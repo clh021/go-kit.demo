@@ -1,10 +1,10 @@
 package initialize
 
 import (
+	"demo/common/utils/consul"
 	"demo/user/global"
 	"encoding/json"
 	"fmt"
-	consulapi "github.com/hashicorp/consul/api"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -26,20 +26,13 @@ func InitConfig()  {
 		)).Info("从本地文件中读取配置中心地址")
 
 	// 从配置中心获取配置
-	cfg := consulapi.DefaultConfig()
-	cfg.Address = fmt.Sprintf("%s:%d", global.ConsulConfig.Host, global.ConsulConfig.Port)
-
-	consulClient, err := consulapi.NewClient(cfg)
-	if err != nil {
-		panic(err)
-	}
-
+	consulClient := consul.NewClient("consul", 8500)
 	kv := consulClient.KV()
 	pair, _, err := kv.Get("user-srv/dev", nil)
 	if err != nil {
 		panic(err)
 	}
-	//fmt.Printf("KV: %v %s\n", pair.Key, pair.Value)
+	fmt.Printf("KV: %v %s\n", pair.Key, pair.Value)
 
 	if err := json.Unmarshal(pair.Value, &global.ServerConfig); err != nil {
 		fmt.Println("配置读取失败")

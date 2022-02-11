@@ -22,8 +22,7 @@ var grpcServer = grpc.NewServer(opts...)
 func Run(addr string, errc chan error) {
 	// 注册grpcServer
 	pb.RegisterUserServiceServer(grpcServer, transport.NewUserGrpcServer(service.NewUserService()))
-
-	// 注册服务健康检查
+	// 注册健康检查Server
 	grpc_health_v1.RegisterHealthServer(grpcServer, health.NewServer())
 
 	lis, err := net.Listen("tcp", addr)
