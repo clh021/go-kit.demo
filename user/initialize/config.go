@@ -28,7 +28,7 @@ func InitConfig()  {
 	// 从配置中心获取配置
 	consulClient := consul.NewClient("consul", 8500)
 	kv := consulClient.KV()
-	pair, _, err := kv.Get("user-srv/dev", nil)
+	pair, _, err := kv.Get(global.ConsulConfig.Key, nil)
 	if err != nil {
 		panic(err)
 	}

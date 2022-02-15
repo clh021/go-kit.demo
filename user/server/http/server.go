@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"demo/user/service"
 	transport "demo/user/transport/http"
@@ -35,6 +36,8 @@ func RegisterRouter(r *mux.Router)  {
 		writer.Header().Set("Content-type", "application/json")
 		writer.Write([]byte(`{"status": "ok"}`))
 	})
+	// prometheus metrics 接口
+	r.Methods("GET", "POST").Path("/metrics").Handler(promhttp.Handler())
 }
 
 // http run

@@ -11,6 +11,7 @@ require (
 	github.com/hashicorp/consul/api v1.12.0
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/mbobakov/grpc-consul-resolver v1.4.4
+	github.com/prometheus/client_golang v1.12.1
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.8.1

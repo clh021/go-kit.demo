@@ -24,6 +24,8 @@ func Run(addr string, errc chan error) {
 	pb.RegisterUserServiceServer(grpcServer, transport.NewUserGrpcServer(service.NewUserService()))
 	// 注册健康检查Server
 	grpc_health_v1.RegisterHealthServer(grpcServer, health.NewServer())
+	// prometheus metric 接口：grpc 实现 prometheus metric 仍然需要依赖 http 服务。
+	// 实现 demo: https://github.com/grpc-ecosystem/go-grpc-prometheus/blob/master/examples/grpc-server-with-prometheus/server/server.go
 
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
