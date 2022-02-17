@@ -66,7 +66,7 @@ func main() {
 	}
 
 	// consul 服务注册
-	client := consul.NewClient("consul", 8500)
+	client := consul.NewClient(global.ConsulConfig.Host, global.ConsulConfig.Port)
 	rc := consul.NewRegistryClient(client)
 	serviceId := fmt.Sprintf("%s", uuid.NewV4())
 	tags := []string{"srv"}
