@@ -14,7 +14,6 @@ import (
 	"demo/user/conf"
 	"demo/user/server/grpc"
 	"demo/user/server/http"
-	log "github.com/sirupsen/logrus"
 )
 
 var HttpAddr string
@@ -33,17 +32,9 @@ func init() {
 	HttpAddr = fmt.Sprintf("%s:%d", conf.HttpHost, conf.HttpPort)
 	GrpcAddr = fmt.Sprintf("%s:%d", conf.GrpcHost, conf.GrpcPort)
 
-	// log
-	log.SetOutput(os.Stdout)
-	log.SetLevel(log.InfoLevel)
-	log.SetFormatter(&log.TextFormatter{
-		TimestampFormat: "2005-01-02 15:04:05",
-	})
-
-	log.WithFields(log.Fields{
-		"http-addr": HttpAddr,
-		"grpc-addr": GrpcAddr,
-	}).Info("run flags:")
+	fmt.Println("run flags:")
+	fmt.Printf("http-addr=%s\n", HttpAddr)
+	fmt.Printf("grpc-addr=%s\n", GrpcAddr)
 
 	// 初始化
 	initialize.InitConfig()
@@ -55,13 +46,17 @@ func main() {
 
 	// http server
 	{
-		log.WithField("http-addr", HttpAddr).Info("http server is running...")
+		fmt.Println("=========================")
+		fmt.Println("http server is running...")
+		fmt.Printf("http-addr=%s\n", HttpAddr)
 		go http.Run(HttpAddr, errc)
 	}
 
 	// grpc server
 	{
-		log.WithField("grpc-addr", GrpcAddr).Info("grpc server is running...")
+		fmt.Println("grpc server is running...")
+		fmt.Printf("grpc-addr=%s\n", GrpcAddr)
+		fmt.Println("=========================")
 		go grpc.Run(GrpcAddr, errc)
 	}
 
@@ -84,12 +79,12 @@ func main() {
 		errc <- fmt.Errorf("%s", <-quit)
 	}()
 
-	log.WithField("error", <-errc).Info("Exit")
+	fmt.Println(<-errc, "Exit")
 
 	// 服务反注册
 	if err := rc.DeRegister(serviceId); err != nil{
-		log.Info("服务从consul中：注销失败")
+		fmt.Println("服务从consul中：注销失败")
 	} else {
-		log.Info("服务从consul中：注销成功")
+		fmt.Println("服务从consul中：注销成功")
 	}
 }

@@ -5,7 +5,6 @@ import (
 	"demo/user/global"
 	"encoding/json"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -20,10 +19,8 @@ func InitConfig()  {
 	if err := v.Unmarshal(&global.ConsulConfig); err != nil {
 		panic(err)
 	}
-	log.WithField("consul-addr",
-		fmt.Sprintf("%s:%d",
-			global.ConsulConfig.Host, global.ConsulConfig.Port,
-		)).Info("从本地文件中读取配置中心地址")
+	fmt.Printf("从本地文件中读取配置中心地址：consul-addr=%s:%d\n",
+		global.ConsulConfig.Host, global.ConsulConfig.Port)
 
 	// 从配置中心获取配置
 	consulClient := consul.NewClient("consul", 8500)
