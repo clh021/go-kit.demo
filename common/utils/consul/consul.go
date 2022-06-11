@@ -1,14 +1,25 @@
 package consul
 
 import (
+	"errors"
 	"fmt"
-	consulapi "github.com/hashicorp/consul/api"
 	"strings"
+
+	consulapi "github.com/hashicorp/consul/api"
 )
 
 type Client struct {
 	//Host string
 	//Port int
+}
+
+type ServiceInstance struct {
+	InstanceId string
+	ServiceId  string
+	Host       string
+	Port       int
+	Secure     bool
+	Metadata   map[string]string
 }
 
 func NewClient(host string, port int) *consulapi.Client {
@@ -33,6 +44,7 @@ type RegistryClient interface {
 	RegisterByHttps(host string, port int, name string, tags []string, id string) error
 	RegisterByGrpc(host string, port int, name string, tags []string, id string) error
 	DeRegister(id string) error
+	ServiceDiscovery(servername string) ([]ServiceInstance, error)
 }
 
 func NewRegistryClient(client *consulapi.Client) RegistryClient {
@@ -59,6 +71,7 @@ func (r *Registry) Register(host string, port int, name string, tags []string, i
 	} else {
 		// grpc 不需要加协议名和/health路径
 		check.GRPC = fmt.Sprintf("%s:%d", host, port)
+		check.Notes = "Consul check service health status."
 	}
 
 	// 生成注册对象
@@ -92,4 +105,29 @@ func (r *Registry) RegisterByGrpc(host string, port int, name string, tags []str
 func (r *Registry) DeRegister(id string) error {
 	err := r.Client.Agent().ServiceDeregister(id)
 	return err
+}
+
+func (r *Registry) ServiceDiscovery(serviceName string) ([]ServiceInstance, error) {
+	//获取所有的服务
+	catalogService, _, err := r.Client.Catalog().Service(serviceName, "", nil)
+	if err != nil {
+		return nil, err
+	}
+	if len(catalogService) <= 0 {
+		return nil, errors.New("no " + serviceName + " consul service")
+	}
+	instance := make([]ServiceInstance, len(catalogService))
+
+	for index, server := range catalogService {
+		s := ServiceInstance{
+			InstanceId: server.ServiceID,
+			ServiceId:  server.ServiceName,
+			Host:       server.ServiceAddress,
+			Port:       server.ServicePort,
+			Metadata:   server.ServiceMeta,
+		}
+		instance[index] = s
+	}
+
+	return instance, nil
 }
