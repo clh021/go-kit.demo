@@ -1,104 +1,43 @@
-# go-kit demo
+# go-kit-demo
 
-基于[go-kit](https://github.com/go-kit/kit)的一个demo工程。
-
-go-kit: A standard library for microservices.
-
-
-
-### 目标
-
-* 支持多种协议和数据传输格式
-* 开闭原则
-* 中间件
-
-
-
-### 功能
-
-- [x] pb+grpc
-- [x] json+http
-- [x] error处理
-- [x] 路由
-
-
-
-### TODO
-
-- [ ] dao层
-- [ ] 容器部署
-- [ ] 日志处理
-- [ ] 熔断
-- [ ] 限流
-- [ ] 监控
-
-
-
-### 项目逻辑结构
-
-
-
-<img src="./static/img/go-kit.jpg">
-
-
-
-
-
-当前demo项目仅提供了 protobuff + grpc 和 json + http两种server。 grpc的请求由grpc的router进行路由，请求体交给transport层进行处理，将pb类型的数据结构转成用户在model层定义的model， 交给service层进行业务处理。 处理结果是model层定义的返回数据， 然后经由transport层转成pb数据用于网络传输。 http的请求也类似，不同的是transport层是进行http协议请求体(响应体)和modle层的转换。
-
-
-
-server层负责监听端口，接收请求和返回响应。提供多种server. 如 pb+grpc json+http等。
-
-router层负责路由转发，将transport+endpoint+service组成的handler注册进server。
-
-transport负责数据转化， 将网络协议的请求、响应数据转换成用户自己定义的model
-
-endpoint层提供服务入口，将service层的服务包装，可在endpoint层插入统一的中间件。
-
-service层提供业务逻辑处理， 将model层定义的参数，一系列业务处理后，变成model层的处理结果。
-
-
-
-
-
-### 项目代码结构
+## 代码结构
 
 ```
-.
-├── README.md                   
-├── cmd                    // 提供client和server的入口
-│   ├── client
-│   └── server
-├── conf                   // 配置相关
-├── endpoint               // endpoint层
-│   └── user
-├── errors                 // 错误处理
-├── go.mod
-├── go.sum
-├── model                  // model层
-│   └── user
-├── pb                     // pb层
-│   └── user
-├── router                 // 路由层。grpc和http注册路由的地方
-│   ├── grpc
-│   └── http
-├── server                 // server层，启动服务的地方
-│   ├── grpc
-│   └── http
-├── service                // service层，处理业务逻辑的地方
-│   └── user
-├── static                 // 文档，文档图片相关
-│   └── img
-├── transport              // transport, 数据转换的地方
-│   ├── grpc
-│   └── http
-├── util                   // 工具方法
-└── vendor                 // 三方依赖
-
+├─common # 公共目录
+│  ├─errors
+│  ├─pb # 编译后的pb文件，供其他模块调用
+│  └─utils # 封装的通用工具类
+│      └─consul
+├─user
+│  ├─conf # 配置定义
+│  ├─dao # 数据库增删改
+│  ├─endpoint # 集成中间件（go-kit）
+│  ├─global 
+│  ├─initialize # 初始化定义
+│  ├─model # 数据模型层，定义入参、出参
+│  ├─pb # proto 源文件
+│  ├─server # 启动、路由
+│  │  ├─grpc
+│  │  └─http
+│  ├─service # 编写主要逻辑（go-kit）
+│  ├─test
+│  └─transport # 网络协议层，转码编码（go-kit）
+│      ├─grpc
+│      └─http
+└─vendor # go 包
 ```
 
+## 简介
 
+基于 go-kit 实现的同时支持 http 和 grpc 的微服务。
+
+按业务模块拆分，每个业务模块拆分一个目录；模块内含go-kit 框架 transport、endpoint、service 三层模型，和开发常用的目录。
+
+common 为公共目录，目前包含 pb、utils。
+
+pb 存放编译后的pb文件，供其他模块调用。pb 源文件存放在自己的微服务模块下的 pb 目录即可。
+
+utils **多个模块都需要**的、**通用性好**的工具类封装放到这里，如不具备此特点，在自己业务模块下建立utils，供自己调用，目前封装了consul，可被各个业务模块调用，后续会持续集成。
 
 
 
